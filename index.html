@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Encyption by Dylan</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      #wrap {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        color: green;
+        position: absolute;
+        overflow: auto;
+      }
+      #body {
+        padding-bottom: 50px;
+      }
+      .block {
+        width: calc(100% - 45px);
+        margin: 0 20px 7px 15px;
+        padding-left: 8px;
+        cursor: text;
+        border-width: 0 0 0 2px;
+        border-style: solid;
+        border-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <div id="body">
+        <div class="block" style="margin: 20px 20px 0 15px;"></div>
+        <div class="block">Hello, welcome to Encryption by Dylan</div>
+        <div class="block">First. Type e for encrypt or d for decrypt, then press enter</div>
+        <div class="block">Second. Type your content and press enter</div>
+        <div class="block">Third. Type your key and press enter for result</div>
+        <div class="block">_</div>
+      </div>
+    </div>
+    <script>
+      window.onload = function () {
+        
+        function encrypt (content, key) {
+          const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          let length = content.length;
+          let keylength = key.length;
+          let keynow = 0;
+          let result = "";
+          for (let i=0;i<length;i++) {
+            let sub = content.substr(i,1);
+            let keysub = key.substr(keynow,1);
+            let index = data.indexOf(sub);
+            let keyindex = data.indexOf(keysub);
+            let newindex = index + keyindex;
+            if (newindex > 36) newindex %= 36;
+            result += data[newindex];
+            keynow++;
+            keynow %= keylength;
+          }
+          return result;
+        }
+        
+        function decrypt (content, key) {
+          const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          let length = content.length;
+          let keylength = key.length;
+          let keynow = 0;
+          let result = "";
+          for (let i=0;i<length;i++) {
+            let sub = content.substr(i,1);
+            let keysub = key.substr(keynow,1);
+            let index = data.indexOf(sub);
+            let keyindex = data.indexOf(keysub);
+            let newindex = index - keyindex;
+            if (newindex < 1) newindex += 36;
+            result += data[newindex];
+            keynow++;
+            keynow %= keylength;
+          }
+          return result;
+        }
+        
+        function block (i) {return document.getElementsByClassName("block")[i];};
+        function scroll () {
+          let elem = document.getElementById("body");
+          elem.scrollIntoView(false)
+        }
+        function addblock () {
+          document.getElementById("body").innerHTML += '<div class="block">_</div>';
+          scroll();
+        };
+        
+        let blocknow = 5;
+        let textnow = "";
+        let step = 1;
+        
+        let step1 = 1;
+        let step2 = "";
+        let step3 = "";
+        
+        block(blocknow).style.borderColor = "green";
+        
+        document.onkeydown = function (e) {
+          let keyclick = e.which;
+          scroll();
+          if (keyclick != 13) {
+            const keydata = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 32];
+            const data = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+            let key = keydata.indexOf(keyclick);
+            if (key != -1) {
+              textnow += data[key];
+              block(blocknow).innerHTML = textnow;
+              block(blocknow).innerHTML += "_";
+            }
+            if (keyclick == 8) {
+              textnow = textnow.substring(0,(textnow.length-1));
+              block(blocknow).innerHTML = textnow;
+              block(blocknow).innerHTML += "_";
+            }
+          } else {
+            if (step == 1) {
+              if (textnow == "e" || textnow == "d") {
+                if (textnow == "d") step1 = 0;
+                step = 2;
+                block(blocknow).innerHTML = textnow;
+                textnow = "";
+                block(blocknow).style.borderColor = "black";
+                addblock();
+                blocknow++;
+                block(blocknow).style.borderColor = "green";
+              }
+            }
+            else if (step == 2) {
+              step2 = textnow;
+              step = 3;
+              block(blocknow).innerHTML = textnow;
+              textnow = "";
+              block(blocknow).style.borderColor = "black";
+              addblock();
+              blocknow++;
+              block(blocknow).style.borderColor = "green";
+            }
+            else { // step == 3
+              step3 = textnow;
+              step = 1;
+              block(blocknow).innerHTML = textnow;
+              textnow = "";
+              block(blocknow).style.borderColor = "black";
+              addblock();
+              blocknow++;
+              let result;
+              if (step1 == 1) result = encrypt(step2,step3);
+              else result = decrypt(step2,step3);
+              block(blocknow).innerHTML = result;
+              addblock();
+              blocknow++;
+              block(blocknow).style.borderColor = "green";
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
