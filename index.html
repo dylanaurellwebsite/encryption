@@ -44,37 +44,53 @@
         
         function encrypt (content, key) {
           const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          const datalength = data.length - 1;
           let length = content.length;
           let keylength = key.length;
           let keynow = 0;
           let result = "";
-          for (let i=0;i<length;i++) {
-            let sub = content.substr(i,1);
-            let keysub = key.substr(keynow,1);
-            let index = data.indexOf(sub);
-            let keyindex = data.indexOf(keysub);
-            let newindex = index + keyindex;
-            if (newindex > 36) newindex %= 36;
-            result += data[newindex];
-            keynow++;
-            keynow %= keylength;
+          let newkey = key;
+          for (let i=1;i<keylength;i++) {
+            newkey += key.substring(i,keylength);
+            newkey += key.substring(0,i);
           }
-          return result;
-        }
-        
-        function decrypt (content, key) {
-          const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
-          let length = content.length;
-          let keylength = key.length;
-          let keynow = 0;
-          let result = "";
+          key = newkey;
+          keylength = key.length;
           for (let i=0;i<length;i++) {
             let sub = content.substr(i,1);
             let keysub = key.substr(keynow,1);
             let index = data.indexOf(sub);
             let keyindex = data.indexOf(keysub);
             let newindex = index - keyindex;
-            if (newindex < 1) newindex += 36;
+            if (newindex < 1) newindex += datalength;
+            result += data[newindex];
+            keynow++;
+            keynow %= keylength;
+          }
+          return result;
+        }
+
+        function decrypt (content, key) {
+          const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          const datalength = data.length - 1;
+          let length = content.length;
+          let keylength = key.length;
+          let keynow = 0;
+          let result = "";
+          let newkey = key;
+          for (let i=1;i<keylength;i++) {
+            newkey += key.substring(i,keylength);
+            newkey += key.substring(0,i);
+          }
+          key = newkey;
+          keylength = key.length;
+          for (let i=0;i<length;i++) {
+            let sub = content.substr(i,1);
+            let keysub = key.substr(keynow,1);
+            let index = data.indexOf(sub);
+            let keyindex = data.indexOf(keysub);
+            let newindex = index + keyindex;
+            if (newindex > datalength) newindex %= datalength;
             result += data[newindex];
             keynow++;
             keynow %= keylength;
