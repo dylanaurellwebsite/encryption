@@ -2,6 +2,16 @@
 <html>
   <head>
     <title>Encyption by Dylan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+      
+      need to do
+        @   #help command
+        @   copied alert
+        @   encryption key reverse biar tambah sick
+        @   acak key semakin berantakan
+      
+    -->
     <style>
       body {
         margin: 0;
@@ -15,7 +25,7 @@
         overflow: auto;
       }
       #body {
-        padding-bottom: 50px;
+        padding-bottom: 80px;
       }
       .block {
         width: calc(100% - 45px);
@@ -25,6 +35,54 @@
         border-width: 0 0 0 2px;
         border-style: solid;
         border-color: black;
+        cursor: pointer;
+      }
+      #forinput {
+        background-color: black;
+        width: 100%;
+        height: 70px;
+        position: fixed;
+        bottom: 0;
+      }
+      #input {
+        caret-color: green;
+        border: 2px solid green;
+        height: 36px;
+        width: calc(100% - 154px);
+        background-color: transparent;
+        margin: 15px 20px;
+        padding: 0 95px 0 15px;
+        border-radius: 20px;
+        outline: none;
+        font-size: 16px;
+        color: green;
+      }
+      #enter {
+        position: absolute;
+        width: 80px;
+        height: 40px;
+        background-color: green;
+        right: 20px;
+        top: 15px;
+        line-height: 36px;
+        text-align: center;
+        border-radius: 20px;
+        color: black;
+        cursor: pointer;
+        font-size: 20px;
+        user-select: none;
+      }
+      #notification {
+        position: fixed;
+        padding: 5px 15px;
+        background-color: green;
+        color: black;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 100px;
+        opacity: 0;
+        transition: 0.5s;
       }
     </style>
   </head>
@@ -33,29 +91,76 @@
       <div id="body">
         <div class="block" style="margin: 20px 20px 0 15px;"></div>
         <div class="block">Hello, welcome to Encryption by Dylan</div>
-        <div class="block">First. Type e for encrypt or d for decrypt, then press enter</div>
-        <div class="block">Second. Type your content and press enter</div>
-        <div class="block">Third. Type your key and press enter for result</div>
-        <div class="block">_</div>
+        <div class="block">Enter&nbsp;&nbsp;&nbsp;#help&nbsp;&nbsp;&nbsp;to show tutorial</div>
+        <div class="block">- - - - - - - - - - - - - - - - - - - -</div>
       </div>
+      <div id="forinput">
+        <input id="input" type="text"/>
+        <div id="enter">send</div>
+      </div>
+      <div id="notification">copied</div>
     </div>
     <script>
+      
       window.onload = function () {
         
+        function id (idx) {return document.getElementById(idx);};
+        function classes (classx) {return document.getElementsByClassName(classx);};
+        
+        function scroll () {
+          let elem = document.getElementById("body");
+          elem.scrollIntoView(false)
+        }
+        function addBlock (content) {
+          id("body").innerHTML += '<div class="block">' + content + '</div>';
+          scroll();
+        };
+        function notification (text) {
+          id("notification").innerHTML = text;
+          id("notification").style.opacity = "1";
+          setTimeout(function () {
+            id("notification").style.opacity = "0";
+          }, 1500)
+        }
+        
+        function scramble (text) {
+          const char = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          let charlength = char.length - 1;
+          let length = text.length;
+          let result1 = "";
+          let result2 = "";
+          let plus = 0;
+          for (let i=0;i<length;i++) {
+            plus += char.indexOf(text.substr(i,1));
+          }
+          for (let i=0;i<length;i++) {
+            let x = char.indexOf(text.substr(i,1));
+            x += x;
+            for (let j=0;j<length;j++) {
+              let y = char.indexOf(text.substr((length-j-1),1));
+              x -= y;
+              x += plus;
+              if (x < 1) x += charlength;
+              if (x > charlength) x %= charlength;
+              result1 += char[x];
+              let z = x + (y % length) - (plus % length);
+              if (z < 1) z += charlength;
+              if (z > charlength) z %= charlength;
+              result2 += char[z];
+            }
+          }
+          let result = result1 + result2;
+          return result;
+        }
+
         function encrypt (content, key) {
-          const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          const data = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
           const datalength = data.length - 1;
           let length = content.length;
+          key = scramble(key);
           let keylength = key.length;
           let keynow = 0;
           let result = "";
-          let newkey = key;
-          for (let i=1;i<keylength;i++) {
-            newkey += key.substring(i,keylength);
-            newkey += key.substring(0,i);
-          }
-          key = newkey;
-          keylength = key.length;
           for (let i=0;i<length;i++) {
             let sub = content.substr(i,1);
             let keysub = key.substr(keynow,1);
@@ -71,19 +176,13 @@
         }
 
         function decrypt (content, key) {
-          const data = ["", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          const data = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
           const datalength = data.length - 1;
           let length = content.length;
+          key = scramble(key);
           let keylength = key.length;
           let keynow = 0;
           let result = "";
-          let newkey = key;
-          for (let i=1;i<keylength;i++) {
-            newkey += key.substring(i,keylength);
-            newkey += key.substring(0,i);
-          }
-          key = newkey;
-          keylength = key.length;
           for (let i=0;i<length;i++) {
             let sub = content.substr(i,1);
             let keysub = key.substr(keynow,1);
@@ -98,89 +197,103 @@
           return result;
         }
         
-        function block (i) {return document.getElementsByClassName("block")[i];};
-        function scroll () {
-          let elem = document.getElementById("body");
-          elem.scrollIntoView(false)
-        }
-        function addblock () {
-          document.getElementById("body").innerHTML += '<div class="block">_</div>';
-          scroll();
-        };
+        id('input').focus();
         
-        let blocknow = 5;
-        let textnow = "";
-        let step = 1;
+        const tutorial = [
+          [
+            'Follow this tutorial to use this encryption machine',
+            '1. If you want to encrypt text enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;e&nbsp;&nbsp;<span>',
+            '&nbsp;&nbsp;&nbsp;&nbsp;But if you want to decrypt text enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;d&nbsp;&nbsp;<span>',
+            '2. Then enter your text',
+            '3. Last, enter the secret key',
+            '&nbsp;',
+            'You can copy the text by clicking the text you want to copy'
+          ],
+          "- - - - - - - - - - - - - - - - - - - -"
+        ]
         
-        let step1 = 1;
-        let step2 = "";
-        let step3 = "";
         
-        block(blocknow).style.borderColor = "green";
+        let progress = 0;
+        let dataFromUser = [1,"",""]
         
-        document.onkeydown = function (e) {
-          let keyclick = e.which;
-          scroll();
-          if (keyclick != 13) {
-            const keydata = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 32];
-            const data = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
-            let key = keydata.indexOf(keyclick);
-            if (key != -1) {
-              textnow += data[key];
-              block(blocknow).innerHTML = textnow;
-              block(blocknow).innerHTML += "_";
-            }
-            if (keyclick == 8) {
-              textnow = textnow.substring(0,(textnow.length-1));
-              block(blocknow).innerHTML = textnow;
-              block(blocknow).innerHTML += "_";
-            }
-          } else {
-            if (step == 1) {
-              if (textnow == "e" || textnow == "d") {
-                if (textnow == "d") step1 = 0;
-                step = 2;
-                block(blocknow).innerHTML = textnow;
-                textnow = "";
-                block(blocknow).style.borderColor = "black";
-                addblock();
-                blocknow++;
-                block(blocknow).style.borderColor = "green";
+        function hitEnterButton () {
+          let input = id('input').value;
+          if (progress == 0) {
+            if (input == "e" || input == "d") {
+              if (input == "d") {
+                dataFromUser[0] = 0;
+                addBlock('decrypt');
+              } else {
+                addBlock('encrypt');
               }
+              progress = 1;
+              id('input').value = "";
             }
-            else if (step == 2) {
-              if (textnow != "") {
-                step2 = textnow;
-                step = 3;
-                block(blocknow).innerHTML = textnow;
-                textnow = "";
-                block(blocknow).style.borderColor = "black";
-                addblock();
-                blocknow++;
-                block(blocknow).style.borderColor = "green";
-              }
+            else if (input == "#help") {
+              for (let i=0;i<tutorial[0].length;i++) {
+                addBlock(tutorial[0][i]);
+              };
+              addBlock(tutorial[1]);
             }
-            else { // step == 3
-              if (textnow != "") {
-                step3 = textnow;
-                step = 1;
-                block(blocknow).innerHTML = textnow;
-                textnow = "";
-                block(blocknow).style.borderColor = "black";
-                addblock();
-                blocknow++;
-                let result;
-                if (step1 == 1) result = encrypt(step2,step3);
-                else result = decrypt(step2,step3);
-                block(blocknow).innerHTML = result;
-                addblock();
-                blocknow++;
-                block(blocknow).style.borderColor = "green";
-              }
+            else {
+              notification("wrong input");
             }
           }
+          else if (progress == 1) {
+            if (input != "") {
+              dataFromUser[1] = input;
+              console.log(input)
+              input = input.replaceAll(" ","&nbsp;");
+              addBlock(input);
+              progress = 2;
+              id('input').value = "";
+            }
+          } else {
+            if (input != "") {
+              dataFromUser[2] = input;
+              input = input.replaceAll(" ","&nbsp;");
+              addBlock(input);
+              progress = 0;
+              id('input').value = "";
+
+              let result;
+              if (dataFromUser[0] == 1) result = encrypt(dataFromUser[1],dataFromUser[2]);
+              else result = decrypt(dataFromUser[1],dataFromUser[2]);
+              result = result.replaceAll(" ","&nbsp;");
+              addBlock(result);
+              dataFromUser = [1,"",""];
+              addBlock(tutorial[1]);
+              notification("success");
+            }
+          }
+          scroll();
         }
+        
+        
+        document.onkeydown = function (e) {
+          let key = e.which;
+          if (key == 13) {
+            hitEnterButton();
+          }
+        }
+        
+        id ('enter').onclick = function () {
+          hitEnterButton();
+        }
+        
+        window.onclick  = function (e) {
+          let clicked = e.srcElement.className;
+          if (clicked == "block") {
+            let content = e.srcElement.innerHTML;
+            content = content.replaceAll("&nbsp;"," ");
+            navigator.clipboard.writeText(content);
+            notification('copied');
+          }
+          id('input').focus();
+        }
+        
       }
+    
     </script>
   </body>
 </html>
