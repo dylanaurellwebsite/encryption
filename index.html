@@ -63,7 +63,7 @@
         background-color: green;
         right: 20px;
         top: 15px;
-        line-height: 36px;
+        line-height: 38px;
         text-align: center;
         border-radius: 20px;
         color: black;
@@ -108,8 +108,8 @@
         
         function scroll () {
           let elem = document.getElementById("body");
-          elem.scrollIntoView(false)
-        }
+          elem.scrollIntoView(false);
+        };
         function addBlock (content) {
           id("body").innerHTML += '<div class="block">' + content + '</div>';
           scroll();
@@ -119,8 +119,8 @@
           id("notification").style.opacity = "1";
           setTimeout(function () {
             id("notification").style.opacity = "0";
-          }, 1500)
-        }
+          }, 1500);
+        };
         
         function scramble (text) {
           const char = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
@@ -128,30 +128,31 @@
           let length = text.length;
           let result1 = "";
           let result2 = "";
-          let plus = 0;
+          let all = 0;
           for (let i=0;i<length;i++) {
-            plus += char.indexOf(text.substr(i,1));
+            all += char.indexOf(text.substr(i,1));
           }
+          all = all % charlength;
           for (let i=0;i<length;i++) {
             let x = char.indexOf(text.substr(i,1));
-            x += x;
+            let last = char.indexOf(text.substr((length-1),1));
+            x = 2 * x;
             for (let j=0;j<length;j++) {
               let y = char.indexOf(text.substr((length-j-1),1));
-              x -= y;
-              x += plus;
-              if (x < 1) x += charlength;
+              x = x - y - all + last;
               if (x > charlength) x %= charlength;
+              while (x < 1) x += charlength;
               result1 += char[x];
-              let z = x + (y % length) - (plus % length);
-              if (z < 1) z += charlength;
+              let z = x - ((last + y) % length) - (all % length);
               if (z > charlength) z %= charlength;
+              while (z < 1) z += charlength;
               result2 += char[z];
             }
           }
           let result = result1 + result2;
           return result;
         }
-
+        
         function encrypt (content, key) {
           const data = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
           const datalength = data.length - 1;
@@ -166,13 +167,14 @@
             let index = data.indexOf(sub);
             let keyindex = data.indexOf(keysub);
             let newindex = index - keyindex;
-            if (newindex < 1) newindex += datalength;
+            if (newindex > datalength) newindex %= datalength;
+            while (newindex < 1) newindex += datalength;
             result += data[newindex];
             keynow++;
             keynow %= keylength;
-          }
+          };
           return result;
-        }
+        };
 
         function decrypt (content, key) {
           const data = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
@@ -189,27 +191,28 @@
             let keyindex = data.indexOf(keysub);
             let newindex = index + keyindex;
             if (newindex > datalength) newindex %= datalength;
+            while (newindex < 1) newindex += datalength;
             result += data[newindex];
             keynow++;
             keynow %= keylength;
-          }
+          };
           return result;
-        }
+        };
         
         id('input').focus();
         
         const tutorial = [
           [
             'Follow this tutorial to use this encryption machine',
-            '1. If you want to encrypt text enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;e&nbsp;&nbsp;<span>',
-            '&nbsp;&nbsp;&nbsp;&nbsp;But if you want to decrypt text enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;d&nbsp;&nbsp;<span>',
+            '1. If you want to encrypt text enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;e&nbsp;&nbsp;<span/>',
+            '&nbsp;&nbsp;&nbsp;&nbsp;But if you want to decrypt text enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;d&nbsp;&nbsp;<span/>',
             '2. Then enter your text',
             '3. Last, enter the secret key',
             '&nbsp;',
             'You can copy the text by clicking the text you want to copy'
           ],
           "- - - - - - - - - - - - - - - - - - - -"
-        ]
+        ];
         
         
         let progress = 0;
@@ -224,7 +227,7 @@
                 addBlock('decrypt');
               } else {
                 addBlock('encrypt');
-              }
+              };
               progress = 1;
               id('input').value = "";
             }
@@ -265,22 +268,22 @@
               dataFromUser = [1,"",""];
               addBlock(tutorial[1]);
               notification("success");
-            }
-          }
+            };
+          };
           scroll();
-        }
+        };
         
         
         document.onkeydown = function (e) {
           let key = e.which;
           if (key == 13) {
             hitEnterButton();
-          }
-        }
+          };
+        };;
         
         id ('enter').onclick = function () {
           hitEnterButton();
-        }
+        };
         
         window.onclick  = function (e) {
           let clicked = e.srcElement.className;
@@ -291,9 +294,9 @@
             notification('copied');
           }
           id('input').focus();
-        }
+        };
         
-      }
+      };
     
     </script>
   </body>

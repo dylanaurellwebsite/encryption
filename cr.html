@@ -1,0 +1,331 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Crack by Dylan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+      
+      copyright @dylan
+      
+      do not copy :)
+      i made this so hard so respect me :)
+      
+    -->
+    <style>
+      body {
+        margin: 0;
+      }
+      #wrap {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        color: green;
+        position: absolute;
+        overflow: auto;
+      }
+      #body {
+        padding-bottom: 80px;
+      }
+      .block {
+        width: calc(100% - 45px);
+        margin: 0 20px 7px 15px;
+        padding-left: 8px;
+        cursor: text;
+        border-width: 0 0 0 2px;
+        border-style: solid;
+        border-color: black;
+        cursor: pointer;
+      }
+      #forinput {
+        background-color: black;
+        width: 100%;
+        height: 70px;
+        position: fixed;
+        bottom: 0;
+      }
+      #input {
+        caret-color: green;
+        border: 2px solid green;
+        height: 36px;
+        width: calc(100% - 154px);
+        background-color: transparent;
+        margin: 15px 20px;
+        padding: 0 95px 0 15px;
+        border-radius: 20px;
+        outline: none;
+        font-size: 16px;
+        color: green;
+      }
+      #enter {
+        position: absolute;
+        width: 80px;
+        height: 40px;
+        background-color: green;
+        right: 20px;
+        top: 15px;
+        line-height: 38px;
+        text-align: center;
+        border-radius: 20px;
+        color: black;
+        cursor: pointer;
+        font-size: 20px;
+        user-select: none;
+      }
+      #notification {
+        position: fixed;
+        padding: 5px 15px;
+        background-color: green;
+        color: black;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 100px;
+        opacity: 0;
+        transition: 0.5s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <div id="body">
+        <div class="block" style="margin: 20px 20px 0 15px;"></div>
+        <div class="block">Crack encrypted text</div>
+        <div class="block">Enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;start&nbsp;&nbsp;</span>&nbsp;&nbsp;to start</div>
+        <div class="block">- - - - - - - - - - - - - - - - - - - -</div>
+      </div>
+      <div id="forinput">
+        <input id="input" type="text"/>
+        <div id="enter">send</div>
+      </div>
+      <div id="notification">copied</div>
+    </div>
+    <script>
+      
+      window.onload = function () {
+        
+        function scramble (text) {
+          const char = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          let charlength = char.length - 1;
+          let length = text.length;
+          let result1 = "";
+          let result2 = "";
+          let all = 0;
+          for (let i=0;i<length;i++) {
+            all += char.indexOf(text.substr(i,1));
+          }
+          all = all % charlength;
+          for (let i=0;i<length;i++) {
+            let x = char.indexOf(text.substr(i,1));
+            let last = char.indexOf(text.substr((length-1),1));
+            x = 2 * x;
+            for (let j=0;j<length;j++) {
+              let y = char.indexOf(text.substr((length-j-1),1));
+              x = x - y - all + last;
+              if (x > charlength) x %= charlength;
+              while (x < 1) x += charlength;
+              result1 += char[x];
+              let z = x - ((last + y) % length) - (all % length);
+              if (z > charlength) z %= charlength;
+              while (z < 1) z += charlength;
+              result2 += char[z];
+            }
+          }
+          let result = result1 + result2;
+          return result;
+        }
+
+        function decrypt (content, key) {
+          const data = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+          const datalength = data.length - 1;
+          let length = content.length;
+          key = scramble(key);
+          let keylength = key.length;
+          let keynow = 0;
+          let result = "";
+          for (let i=0;i<length;i++) {
+            let sub = content.substr(i,1);
+            let keysub = key.substr(keynow,1);
+            let index = data.indexOf(sub);
+            let keyindex = data.indexOf(keysub);
+            let newindex = index + keyindex;
+            if (newindex > datalength) newindex %= datalength;
+            while (newindex < 1) newindex += datalength;
+            result += data[newindex];
+            keynow++;
+            keynow %= keylength;
+          };
+          return result;
+        };
+
+        function id (idx) {return document.getElementById(idx);};
+        
+        function scroll () {
+          let elem = document.getElementById("body");
+          elem.scrollIntoView(false);
+        };
+        function addBlock (content) {
+          id("body").innerHTML += '<div class="block">' + content + '</div>';
+          scroll();
+        };
+        function notification (text) {
+          id("notification").innerHTML = text;
+          id("notification").style.opacity = "1";
+          setTimeout(function () {
+            id("notification").style.opacity = "0";
+          }, 1500);
+        };
+        
+        id("input").focus();
+
+        let progress = 0;
+        let encrypted = "";
+        let length = 0;
+        
+        let combination = 0;
+
+        const char = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "];
+        let charlength = char.length;
+
+        function checkdata (data,expected) {
+          let bool = 1;
+          for (let i=0;i<data.length;i++) {
+            if(data[i] != expected) bool *= 0;
+          }
+          if (bool == 1) return false;
+          else return true;
+        }
+
+        function hitEnterButton () {
+          
+          if (progress == 0) {
+            if (id("input").value == "start") {
+              addBlock("Enter your encrypted text")
+              id("input").value = "";
+              progress++;
+            } else {
+              id("input").value = "";
+            }
+          }
+          
+          else if (progress == 1) {
+            encrypted = id("input").value;
+            addBlock(encrypted);
+            addBlock('Enter the length of the secret key might be. Enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;number&nbsp;&nbsp;</span>&nbsp;&nbsp;only')
+            id("input").value = "";
+            progress++;
+          }
+          
+          else if (progress == 2) {
+            length = parseInt(id("input").value);
+            if (length > 0) {
+              addBlock(length);
+              addBlock('Is there any custom character do you want to use to decrease the combinations. Enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;yes&nbsp;&nbsp;</span>&nbsp;&nbsp;or&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;no&nbsp;&nbsp;');
+              id("input").value = "";
+              progress++;
+            } 
+            else {
+              id("input").value = "";
+            }
+          }
+
+          else if (progress == 3) {
+            if (id("input").value == "yes") {
+              addBlock("Yes");
+              addBlock('Enter your custom character in single line. example :&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;ABCDE12345&nbsp;&nbsp;</span>');
+              progress ++;
+              id("input").value = "";
+            }
+            else if (id("input").value == "no") {
+              progress += 2;
+              id("input").value = "";
+              addBlock("No");
+              charused = char;
+              charlength = charused.length;
+              hitEnterButton();
+            } else {
+              id("input").value = "";
+            }
+          }
+
+          else if (progress == 4) {
+            charused = id("input").value.split("");
+            charlength = charused.length;
+            progress ++;
+            id("input").value = "";
+            addBlock(charused)
+            hitEnterButton();
+          }
+
+          else if (progress == 5) {
+            combination = charlength**length;
+            addBlock('There are&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;' + combination + '&nbsp;&nbsp;</span>&nbsp;&nbsp;combinations');
+            addBlock('Do you want to continue? Enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;start&nbsp;&nbsp;</span>&nbsp;&nbsp;to continue');
+            id("input").value = "";
+            progress++;
+          }
+
+          else {
+            if (id("input").value == "start") {
+              progress = 0;
+              id("input").value = "";
+              addBlock("- - - - - - - - - - - - - - - - - - - -");
+
+              let data = [];
+              for (let i=0;i<length;i++) {
+                data.push(0);
+              }
+
+              for (let i=1;i<=combination;i++) {
+                setTimeout(function () {
+                  for (let j=(length-1); j>0; j--) {
+                    if (data[j] == charlength) {
+                      data[j-1] += 1;
+                      data[j] = 0;
+                    }
+                  }
+                  let key = "";
+                  for (let j=0;j<length;j++) {
+                    key += charused[data[j]];
+                  }
+                  data[length-1] += 1;
+                  addBlock(key + "&nbsp;&nbsp;&nbsp;&nbsp;" + decrypt(encrypted,key));
+                  scroll();
+
+                  if (i == combination) {
+                    addBlock("- - - - - - - - - - - - - - - - - - - -");
+                    addBlock('Enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;start&nbsp;&nbsp;</span>&nbsp;&nbsp;to start')
+                    addBlock("- - - - - - - - - - - - - - - - - - - -");
+                  }
+
+                }, 250 * i)
+              }
+            }
+            else {
+              progress = 0;
+              id("input").value = "";
+              addBlock("Canceled");
+              addBlock("- - - - - - - - - - - - - - - - - - - -");
+              addBlock('Enter&nbsp;&nbsp;<span style="background-color: green;color: black;">&nbsp;&nbsp;start&nbsp;&nbsp;</span>&nbsp;&nbsp;to start')
+              addBlock("- - - - - - - - - - - - - - - - - - - -");
+            }
+          }
+
+        }
+        
+        document.onkeydown = function (e) {
+          let key = e.which;
+          if (key == 13) {
+            hitEnterButton();
+          };
+        };;
+        
+        id ('enter').onclick = function () {
+          hitEnterButton();
+        };
+        
+        
+      }
+    
+    </script>
+  </body>
+</html>
